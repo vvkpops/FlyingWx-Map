@@ -1,0 +1,25 @@
+src/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviation Weather Navigational Data</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Aviation Weather Navigational Data</h1>
+        <nav>
+            <button id="loadAirports">Load Airports</button>
+            <button id="loadNavaids">Load Navaids</button>
+            <button id="loadFixes">Load Fixes</button>
+        </nav>
+    </header>
+    <main>
+        <div id="map" style="height: 600px;"></div>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>
