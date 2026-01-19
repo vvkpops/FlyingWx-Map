@@ -252,6 +252,76 @@
         "country": "US",
         "region": "CO"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-60.4258, 53.3194]
+      },
+      "properties": {
+        "ident": "CYYR",
+        "name": "Goose Bay Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "NL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.1211, 46.2900]
+      },
+      "properties": {
+        "ident": "CYYG",
+        "name": "Charlottetown Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "PE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.5322, 45.8781]
+      },
+      "properties": {
+        "ident": "CYQM",
+        "name": "Moncton Flight College Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "NB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-65.9556, 46.1125]
+      },
+      "properties": {
+        "ident": "CYFC",
+        "name": "Fredericton Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "NB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.0644, 45.3161]
+      },
+      "properties": {
+        "ident": "CYSJ",
+        "name": "Saint John Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "NB"
+      }
     }
   ]
 }

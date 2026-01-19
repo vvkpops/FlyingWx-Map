@@ -287,8 +287,8 @@ function addWaypointFromSearch(result: SearchResult) {
     route.value = waypointIdent;
   }
   
-  // Navigate map to waypoint location
-  if (mapStore.map) {
+  // Navigate map to waypoint location with safety checks
+  if (mapStore.map && mapStore.map.getContainer()) {
     // Set appropriate zoom level based on waypoint type for visibility
     let zoomLevel = 10; // Default zoom
     
@@ -304,17 +304,35 @@ function addWaypointFromSearch(result: SearchResult) {
         break;
     }
     
-    // Navigate to the waypoint with smooth animation
-    mapStore.map.setView([result.lat, result.lon], zoomLevel, {
-      animate: true,
-      duration: 1.0 // 1 second animation
-    });
-    
-    // Update mapStore center to keep it in sync
-    mapStore.setCenter(result.lat, result.lon);
-    mapStore.setZoom(zoomLevel);
-    
-    console.log(`Navigated to ${result.ident} (${result.type}) at ${result.lat.toFixed(4)}, ${result.lon.toFixed(4)}`);
+    try {
+      // Use a timeout to ensure map is ready and avoid race conditions
+      setTimeout(() => {
+        if (mapStore.map && mapStore.map.getContainer()) {
+          // Navigate to the waypoint with smooth animation
+          mapStore.map.setView([result.lat, result.lon], zoomLevel, {
+            animate: true,
+            duration: 0.8, // Slightly shorter animation
+            easeLinearity: 0.2
+          });
+          
+          // Update mapStore center to keep it in sync
+          mapStore.setCenter(result.lat, result.lon);
+          mapStore.setZoom(zoomLevel);
+          
+          console.log(`Navigated to ${result.ident} (${result.type}) at ${result.lat.toFixed(4)}, ${result.lon.toFixed(4)}`);
+        }
+      }, 50); // Small delay to ensure map is ready
+    } catch (error) {
+      console.warn('Error navigating to waypoint:', error);
+      // Fallback: try without animation
+      try {
+        mapStore.map.setView([result.lat, result.lon], zoomLevel, { animate: false });
+        mapStore.setCenter(result.lat, result.lon);
+        mapStore.setZoom(zoomLevel);
+      } catch (fallbackError) {
+        console.error('Failed to navigate to waypoint:', fallbackError);
+      }
+    }
   }
   
   // Clear search
