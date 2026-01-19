@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { dataLoaderService } from "@/services/dataLoader";
+import { airportEndpoint } from "@/api/endpoints/airport";
 
 interface GeoJSONFeature {
   type: string;
@@ -61,17 +62,15 @@ export const useNavigationStore = defineStore("navigation", () => {
       const fixData = dataLoaderService.getFixesByBounds(minLat, minLon, maxLat, maxLon);
       setFixes(fixData);
       
-      // For airports, try API (with fallback)
+      // For airports, use the API client that works in both dev and production
       try {
-        const airportResponse = await fetch(
-          `/api/data/airport?format=geojson&bbox=${minLat},${minLon},${maxLat},${maxLon}`
-        );
-        if (airportResponse.ok) {
-          const airportData = await airportResponse.json();
-          setAirports(airportData.features || []);
-        }
+        console.log('Loading airports from API for bounds:', { minLat, minLon, maxLat, maxLon });
+        const airportData = await airportEndpoint.getAirportsByBbox([minLon, minLat, maxLon, maxLat]);
+        setAirports(airportData.features || []);
+        console.log('Loaded airports from API:', airportData.features?.length || 0);
       } catch (e) {
-        console.warn('API call failed, using local data only');
+        console.warn('API call failed, using local data only:', e);
+        // Could add fallback to local airport data here if available
       }
 
     } catch (err: any) {
