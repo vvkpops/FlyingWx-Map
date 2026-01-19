@@ -287,6 +287,36 @@ function addWaypointFromSearch(result: SearchResult) {
     route.value = waypointIdent;
   }
   
+  // Navigate map to waypoint location
+  if (mapStore.map) {
+    // Set appropriate zoom level based on waypoint type for visibility
+    let zoomLevel = 10; // Default zoom
+    
+    switch (result.type) {
+      case 'airport':
+        zoomLevel = 12; // Closer zoom for airports
+        break;
+      case 'navaid':
+        zoomLevel = 11; // Medium zoom for navaids
+        break;
+      case 'fix':
+        zoomLevel = 10; // Standard zoom for fixes
+        break;
+    }
+    
+    // Navigate to the waypoint with smooth animation
+    mapStore.map.setView([result.lat, result.lon], zoomLevel, {
+      animate: true,
+      duration: 1.0 // 1 second animation
+    });
+    
+    // Update mapStore center to keep it in sync
+    mapStore.setCenter(result.lat, result.lon);
+    mapStore.setZoom(zoomLevel);
+    
+    console.log(`Navigated to ${result.ident} (${result.type}) at ${result.lat.toFixed(4)}, ${result.lon.toFixed(4)}`);
+  }
+  
   // Clear search
   searchQuery.value = '';
   searchResults.value = [];
