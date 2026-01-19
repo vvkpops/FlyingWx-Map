@@ -39,11 +39,11 @@
           <input 
             v-model="route" 
             type="text" 
-            placeholder="e.g., HTO V229 HFD V489 ALB"
+            placeholder="e.g., SCELA LINND GAYEL or 43.65,-79.38 CYYZ"
             @input="route = route.toUpperCase()"
             class="route-input"
           />
-          <small>Enter fixes, navaids, or airways</small>
+          <small>Enter fixes, navaids, airports, or coordinates (lat,lon)</small>
         </div>
         
         <div class="input-group">
@@ -160,7 +160,9 @@ async function plotRoute() {
     const resolvedWaypoints = await resolveWaypoints(waypoints);
     
     if (resolvedWaypoints.length < 2) {
-      errorMessage.value = "Could not resolve enough waypoints. Please check your input.";
+      const resolvedCount = resolvedWaypoints.length;
+      const totalCount = waypoints.length;
+      errorMessage.value = `Could not resolve enough waypoints (found ${resolvedCount}/${totalCount}). Please check your input. Examples: KJFK, EGLL, DEN, YYZ, or coordinates like 40.7,-74.0`;
       isLoading.value = false;
       return;
     }
@@ -208,33 +210,44 @@ async function plotRoute() {
 
 async function resolveWaypoints(names: string[]): Promise<Array<{name: string, latlng: LatLng}>> {
   const resolved = [];
+  const unresolved = [];
   
   for (const name of names) {
     try {
       const latlng = await findWaypoint(name);
       if (latlng) {
-        resolved.push({ name, latlng });
+        resolved.push({ name: name.toUpperCase(), latlng });
+        console.log(`✓ Found waypoint: ${name.toUpperCase()}`);
       } else {
-        console.warn(`Could not find waypoint: ${name}`);
+        unresolved.push(name);
+        console.warn(`✗ Could not find waypoint: ${name}`);
       }
     } catch (error) {
       console.error(`Error resolving waypoint ${name}:`, error);
+      unresolved.push(name);
     }
+  }
+  
+  if (unresolved.length > 0) {
+    console.warn("Unresolved waypoints:", unresolved);
   }
   
   return resolved;
 }
 
 async function findWaypoint(identifier: string): Promise<LatLng | null> {
+  // Ensure data is loaded first
+  await dataLoaderService.loadAllData();
+  
   // Search in AIXM data using the data loader service
-  const feature = dataLoaderService.findByIdentifier(identifier);
+  const feature = dataLoaderService.findByIdentifier(identifier.toUpperCase());
   
   if (feature && feature.geometry?.coordinates) {
     const [lon, lat] = feature.geometry.coordinates;
     return L.latLng(lat, lon);
   }
   
-  // If not found in local data, try API
+  // If not found in local data, try API for airports
   try {
     const response = await fetch(`/api/data/airport?ids=${identifier}&format=geojson`);
     if (response.ok) {
@@ -246,6 +259,16 @@ async function findWaypoint(identifier: string): Promise<LatLng | null> {
     }
   } catch (e) {
     console.log("API fetch failed for", identifier);
+  }
+  
+  // Try parsing as coordinates (lat,lon or lat/lon)
+  const coordMatch = identifier.match(/^(-?\d+\.?\d*)[,\/]\s*(-?\d+\.?\d*)$/);
+  if (coordMatch) {
+    const lat = parseFloat(coordMatch[1]);
+    const lon = parseFloat(coordMatch[2]);
+    if (lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+      return L.latLng(lat, lon);
+    }
   }
   
   return null;
