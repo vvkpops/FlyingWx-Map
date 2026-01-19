@@ -1,5 +1,6 @@
 {
   "name": "aviation-nav-app",
+  "private": true,
   "version": "1.0.0",
   "description": "Aviation navigation app with AviationWeather.gov API integration",
   "type": "module",
@@ -7,6 +8,7 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
+    "start": "vite preview",
     "parse-aixm": "node scripts/parseAIXM.js"
   },
   "dependencies": {

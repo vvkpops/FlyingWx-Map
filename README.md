@@ -1,29 +1,90 @@
-# Aviation Navigation App
+# FlyingWx Navigation Map
 
-A web-based aviation navigation application that displays real-time aviation data from the AviationWeather.gov API on an interactive map, similar to SkyVector.
+A web-based aviation navigation application that displays aviation data on an interactive map with flight planning capabilities.
 
 ## Features
 
 - **Interactive Map**: Built with Leaflet.js for smooth navigation and zooming
-- **Real-time Aviation Data**: Integration with AviationWeather.gov API
-- **Multiple Data Layers**:
+- **Flight Planning**: Create routes with time calculations and distance measurements
+- **Aviation Data Layers**:
   - Navaids (Navigational Aids) - VOR, DME, NDB, TACAN, etc.
   - Airports - With ICAO codes and detailed information
-  - Fixes/Waypoints - Navigation waypoints
-  - Obstacles (coming soon)
+  - Fixes/Waypoints - Navigation waypoints from AIXM and NavCanada data
+- **Geolocation**: Automatically centers map on user's current location
 - **Layer Toggle Controls**: Show/hide different types of aviation features
 - **Feature Details**: Click on any marker to see detailed information
-- **Responsive Sidebar**: Collapsible sidebar showing data statistics and selected feature details
-- **Bounding Box Queries**: Automatically loads data for the current map view
+- **Responsive Design**: Works on desktop and mobile devices
 
 ## Tech Stack
 
-- **Frontend Framework**: Vue 3 (Composition API with TypeScript)
+- **Frontend**: Vue 3 + TypeScript + Composition API
+- **Mapping**: Leaflet.js
 - **State Management**: Pinia
-- **Mapping Library**: Leaflet
-- **API Client**: Axios
 - **Build Tool**: Vite
-- **Language**: TypeScript
+- **Styling**: CSS3 with CSS Variables
+- **Data Sources**: AIXM navigation data, NavCanada fixes
+
+## Live Demo
+
+🌐 **[Visit FlyingWx Navigation Map](https://your-vercel-url.vercel.app)**
+
+## Quick Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vvkpops/FlyingWx-Map.git)
+
+## Local Development
+
+### Prerequisites
+
+- Node.js 16+ and npm
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/vvkpops/FlyingWx-Map.git
+cd FlyingWx-Map
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open your browser to `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+## Deployment
+
+### Deploy to Vercel
+
+1. **One-click Deploy**: Use the deploy button above, or
+2. **Manual Deploy**:
+   - Fork/clone this repository
+   - Connect your GitHub account to Vercel
+   - Import this repository
+   - Vercel will automatically detect it's a Vite project and configure the build settings
+
+### Environment Variables
+
+For production deployment, you can set these optional environment variables in Vercel:
+
+- `VITE_APP_TITLE`: Custom app title (default: "FlyingWx Navigation Map")
+- `VITE_APP_VERSION`: App version (default: "1.0.0")
+
+### Custom Domain
+
+After deployment, you can add a custom domain in your Vercel dashboard.
 
 ## Project Structure
 

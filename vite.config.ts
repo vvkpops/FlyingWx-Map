@@ -9,6 +9,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
+  build: {
+    target: 'esnext',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['vue', 'pinia'],
+          'leaflet': ['leaflet']
+        }
+      }
+    }
+  },
   server: {
     proxy: {
       '/api': {

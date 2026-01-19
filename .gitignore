@@ -48,3 +48,6 @@ Thumbs.db
 
 # Test files
 App-test.vue
+
+# Vercel
+.vercel
