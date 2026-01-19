@@ -55,8 +55,17 @@ class DataLoaderService {
       console.warn('Could not load NavCanada fixes:', error);
     }
 
-    // Note: We can add airports and fixes when they're parsed
-    // For now, these will be loaded from API on-demand
+    try {
+      // Load airports from local data
+      const airportResponse = await fetch('/data/airports.geojson');
+      if (airportResponse.ok) {
+        const airportData: GeoJSONCollection = await airportResponse.json();
+        this.airportsData = airportData.features || [];
+        console.log(`Loaded ${this.airportsData.length} airports from local data`);
+      }
+    } catch (error) {
+      console.warn('Could not load airports data:', error);
+    }
 
     this.isLoaded = true;
     console.log('Aviation data loaded successfully');
@@ -92,6 +101,7 @@ class DataLoaderService {
 
     // Search airports
     const airport = this.airportsData.find(a => 
+      a.properties.ident === identifier || 
       a.properties.icaoId === identifier || 
       a.properties.iataId === identifier
     );

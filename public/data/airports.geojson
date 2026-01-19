@@ -1,0 +1,257 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-52.7519, 47.6206]
+      },
+      "properties": {
+        "ident": "CYYT",
+        "name": "St. John's International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "NL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.5086, 44.8808]
+      },
+      "properties": {
+        "ident": "CYHZ",
+        "name": "Halifax Stanfield International Airport", 
+        "type": "airport",
+        "country": "CA",
+        "region": "NS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-75.6719, 45.3225]
+      },
+      "properties": {
+        "ident": "CYOW",
+        "name": "Ottawa Macdonald-Cartier International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "ON"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-79.6306, 43.6767]
+      },
+      "properties": {
+        "ident": "CYYZ",
+        "name": "Toronto Pearson International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "ON"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.7408, 45.4706]
+      },
+      "properties": {
+        "ident": "CYUL",
+        "name": "Montréal-Pierre Elliott Trudeau International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "QC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-123.1839, 49.1967]
+      },
+      "properties": {
+        "ident": "CYVR",
+        "name": "Vancouver International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "BC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-114.0119, 51.1225]
+      },
+      "properties": {
+        "ident": "CYYC",
+        "name": "Calgary International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "AB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-113.5769, 53.3108]
+      },
+      "properties": {
+        "ident": "CYEG",
+        "name": "Edmonton International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "AB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.7, 52.1667]
+      },
+      "properties": {
+        "ident": "CYQR",
+        "name": "Saskatoon John G. Diefenbaker International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "SK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-97.2394, 49.9100]
+      },
+      "properties": {
+        "ident": "CYWG",
+        "name": "Winnipeg Richardson International Airport",
+        "type": "airport",
+        "country": "CA",
+        "region": "MB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.8631, 40.7769]
+      },
+      "properties": {
+        "ident": "KJFK",
+        "name": "John F. Kennedy International Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "NY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.8725, 40.7489]
+      },
+      "properties": {
+        "ident": "KLGA",
+        "name": "LaGuardia Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "NY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.1689, 40.6892]
+      },
+      "properties": {
+        "ident": "KEWR",
+        "name": "Newark Liberty International Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "NJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-118.4081, 33.9425]
+      },
+      "properties": {
+        "ident": "KLAX",
+        "name": "Los Angeles International Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-122.3750, 37.6214]
+      },
+      "properties": {
+        "ident": "KSFO",
+        "name": "San Francisco International Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "CA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-87.9048, 41.9786]
+      },
+      "properties": {
+        "ident": "KORD",
+        "name": "Chicago O'Hare International Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "IL"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.0056, 42.3656]
+      },
+      "properties": {
+        "ident": "KBOS",
+        "name": "Logan International Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "MA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.6731, 39.8561]
+      },
+      "properties": {
+        "ident": "KDEN",
+        "name": "Denver International Airport",
+        "type": "airport",
+        "country": "US",
+        "region": "CO"
+      }
+    }
+  ]
+}

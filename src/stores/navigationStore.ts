@@ -62,15 +62,26 @@ export const useNavigationStore = defineStore("navigation", () => {
       const fixData = dataLoaderService.getFixesByBounds(minLat, minLon, maxLat, maxLon);
       setFixes(fixData);
       
-      // For airports, use the API client that works in both dev and production
+      // For airports, try API first, then fallback to local data
+      let airportsLoaded = false;
       try {
         console.log('Loading airports from API for bounds:', { minLat, minLon, maxLat, maxLon });
         const airportData = await airportEndpoint.getAirportsByBbox([minLon, minLat, maxLon, maxLat]);
-        setAirports(airportData.features || []);
-        console.log('Loaded airports from API:', airportData.features?.length || 0);
+        if (airportData.features && airportData.features.length > 0) {
+          setAirports(airportData.features);
+          console.log('Loaded airports from API:', airportData.features.length);
+          airportsLoaded = true;
+        }
       } catch (e) {
-        console.warn('API call failed, using local data only:', e);
-        // Could add fallback to local airport data here if available
+        console.warn('API call failed for airports:', e);
+      }
+
+      // If API failed or returned no results, use local airport data
+      if (!airportsLoaded) {
+        console.log('Using local airport data as fallback');
+        const localAirportData = dataLoaderService.getAirportsByBounds(minLat, minLon, maxLat, maxLon);
+        setAirports(localAirportData);
+        console.log('Loaded airports from local data:', localAirportData.length);
       }
 
     } catch (err: any) {
