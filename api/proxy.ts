@@ -30,6 +30,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     console.log('Proxying request to:', url.toString());
+    console.log('Request method:', req.method);
+    console.log('Original query params:', req.query);
 
     // Make the request to Aviation Weather API
     const response = await fetch(url.toString(), {
@@ -40,16 +42,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     });
 
+    console.log('Aviation Weather API response status:', response.status);
+    console.log('Aviation Weather API response headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
       console.error('Aviation Weather API error:', response.status, response.statusText);
+      const errorBody = await response.text();
+      console.error('Aviation Weather API error body:', errorBody);
       return res.status(response.status).json({
         error: `Aviation Weather API error: ${response.statusText}`,
-        status: response.status
+        status: response.status,
+        body: errorBody,
+        url: url.toString()
       });
     }
 
     // Get the response data
     const data = await response.text();
+    console.log('Aviation Weather API response data length:', data.length);
+    console.log('Aviation Weather API response preview:', data.substring(0, 200));
     const contentType = response.headers.get('content-type') || 'application/json';
 
     // Set the appropriate content type and return the data
