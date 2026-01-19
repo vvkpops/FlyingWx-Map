@@ -1,7 +1,15 @@
 ﻿import axios, { AxiosInstance } from "axios";
 
 // Use the Vercel API proxy route in production, and Vite proxy in development
-const BASE_URL = process.env.NODE_ENV === 'production' ? "/api/proxy" : "/api/data";
+const isProduction = process.env.NODE_ENV === 'production' || import.meta.env.PROD;
+const BASE_URL = isProduction ? "/api/proxy" : "/api/data";
+
+console.log('AviationWeatherClient environment:', {
+  NODE_ENV: process.env.NODE_ENV,
+  'import.meta.env.PROD': import.meta.env.PROD,
+  isProduction,
+  BASE_URL
+});
 
 class AviationWeatherClient {
   private client: AxiosInstance;
@@ -29,7 +37,7 @@ class AviationWeatherClient {
       const queryString = this.buildQueryString(params);
       
       let url: string;
-      if (process.env.NODE_ENV === 'production') {
+      if (isProduction) {
         // In production, use the proxy API with endpoint as a parameter
         const allParams = { endpoint, ...params };
         const proxyQueryString = this.buildQueryString(allParams);
