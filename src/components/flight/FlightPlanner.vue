@@ -69,6 +69,43 @@
           />
         </div>
         
+        <!-- Waypoint Search -->
+        <div class="waypoint-search">
+          <div class="input-group">
+            <label>Search Waypoints:</label>
+            <input 
+              v-model="searchQuery" 
+              type="text" 
+              placeholder="Search airports, navaids, fixes..."
+              @input="performSearch"
+              @focus="showSearchResults = true"
+              class="search-input"
+            />
+            <small>Search by identifier or name</small>
+          </div>
+          
+          <div v-if="showSearchResults && searchResults.length > 0" class="search-results">
+            <div 
+              v-for="result in searchResults" 
+              :key="result.id"
+              @click="addWaypointFromSearch(result)"
+              class="search-result-item"
+              :class="result.type"
+            >
+              <div class="result-main">
+                <span class="result-ident">{{ result.ident }}</span>
+                <span class="result-type-badge">{{ result.type.toUpperCase() }}</span>
+              </div>
+              <div class="result-name">{{ result.name }}</div>
+              <div class="result-coords">{{ result.coordinates }}</div>
+            </div>
+          </div>
+          
+          <div v-if="showSearchResults && searchQuery && searchResults.length === 0" class="no-results">
+            No waypoints found for "{{ searchQuery }}"
+          </div>
+        </div>
+        
         <button @click="plotRoute" class="btn-plot" :disabled="isLoading">
           {{ isLoading ? 'Plotting...' : 'Plot Route' }}
         </button>
@@ -116,6 +153,21 @@ const errorMessage = ref("");
 const totalDistance = ref(0);
 const speed = ref(120); // Default speed in knots
 
+// Search functionality
+const searchQuery = ref("");
+const searchResults = ref<SearchResult[]>([]);
+const showSearchResults = ref(false);
+
+interface SearchResult {
+  id: string;
+  ident: string;
+  name: string;
+  type: 'airport' | 'navaid' | 'fix';
+  coordinates: string;
+  lat: number;
+  lon: number;
+}
+
 interface RouteLeg {
   from: string;
   to: string;
@@ -135,6 +187,122 @@ function togglePlanner() {
   isActive.value = !isActive.value;
   // Don't clear route when closing - let user explicitly clear it
 }
+
+function performSearch() {
+  const query = searchQuery.value.trim().toLowerCase();
+  
+  if (query.length < 2) {
+    searchResults.value = [];
+    return;
+  }
+
+  const results: SearchResult[] = [];
+  
+  try {
+    // Search airports
+    const airports = dataLoaderService.getAllAirports();
+    for (const airport of airports) {
+      const ident = airport.properties.ident?.toLowerCase() || '';
+      const name = airport.properties.name?.toLowerCase() || '';
+      
+      if (ident.includes(query) || name.includes(query)) {
+        results.push({
+          id: `airport-${airport.properties.ident}`,
+          ident: airport.properties.ident || '',
+          name: airport.properties.name || '',
+          type: 'airport',
+          coordinates: `${airport.geometry.coordinates[1].toFixed(4)}, ${airport.geometry.coordinates[0].toFixed(4)}`,
+          lat: airport.geometry.coordinates[1],
+          lon: airport.geometry.coordinates[0]
+        });
+      }
+    }
+    
+    // Search navaids
+    const navaids = dataLoaderService.getAllNavaids();
+    for (const navaid of navaids) {
+      const ident = navaid.properties.ident?.toLowerCase() || '';
+      const name = navaid.properties.name?.toLowerCase() || '';
+      
+      if (ident.includes(query) || name.includes(query)) {
+        results.push({
+          id: `navaid-${navaid.properties.ident}`,
+          ident: navaid.properties.ident || '',
+          name: navaid.properties.name || '',
+          type: 'navaid',
+          coordinates: `${navaid.geometry.coordinates[1].toFixed(4)}, ${navaid.geometry.coordinates[0].toFixed(4)}`,
+          lat: navaid.geometry.coordinates[1],
+          lon: navaid.geometry.coordinates[0]
+        });
+      }
+    }
+    
+    // Search fixes
+    const fixes = dataLoaderService.getAllFixes();
+    for (const fix of fixes) {
+      const ident = fix.properties.ident?.toLowerCase() || '';
+      const name = fix.properties.name?.toLowerCase() || '';
+      
+      if (ident.includes(query) || name.includes(query)) {
+        results.push({
+          id: `fix-${fix.properties.ident}`,
+          ident: fix.properties.ident || '',
+          name: fix.properties.name || 'Fix',
+          type: 'fix',
+          coordinates: `${fix.geometry.coordinates[1].toFixed(4)}, ${fix.geometry.coordinates[0].toFixed(4)}`,
+          lat: fix.geometry.coordinates[1],
+          lon: fix.geometry.coordinates[0]
+        });
+      }
+    }
+    
+  } catch (error) {
+    console.warn('Search error:', error);
+  }
+  
+  // Sort by relevance (exact matches first, then by type)
+  results.sort((a, b) => {
+    const aExact = a.ident.toLowerCase() === query;
+    const bExact = b.ident.toLowerCase() === query;
+    
+    if (aExact && !bExact) return -1;
+    if (!aExact && bExact) return 1;
+    
+    // Then by type preference: airports, navaids, fixes
+    const typeOrder = { airport: 0, navaid: 1, fix: 2 };
+    return typeOrder[a.type] - typeOrder[b.type];
+  });
+  
+  // Limit to 10 results
+  searchResults.value = results.slice(0, 10);
+}
+
+function addWaypointFromSearch(result: SearchResult) {
+  const waypointIdent = result.ident;
+  
+  // Add to route field
+  if (route.value.trim()) {
+    route.value += ` ${waypointIdent}`;
+  } else {
+    route.value = waypointIdent;
+  }
+  
+  // Clear search
+  searchQuery.value = '';
+  searchResults.value = [];
+  showSearchResults.value = false;
+}
+
+// Close search results when clicking outside
+function handleClickOutside(event: Event) {
+  const target = event.target as HTMLElement;
+  if (!target.closest('.waypoint-search')) {
+    showSearchResults.value = false;
+  }
+}
+
+// Add event listener for clicking outside
+document.addEventListener('click', handleClickOutside);
 
 async function plotRoute() {
   if (!departure.value || !arrival.value) {
@@ -590,6 +758,135 @@ function updateTimes() {
 
 .btn-clear:hover {
   background: #c82333;
+}
+
+/* Waypoint Search Styles */
+.waypoint-search {
+  position: relative;
+  margin: 15px 0;
+}
+
+.search-input {
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-result-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.search-result-item:hover {
+  background: #f8f9fa;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item.airport {
+  border-left: 4px solid #28a745;
+}
+
+.search-result-item.navaid {
+  border-left: 4px solid #007bff;
+}
+
+.search-result-item.fix {
+  border-left: 4px solid #ffc107;
+}
+
+.result-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.result-ident {
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 14px;
+  color: #333;
+}
+
+.result-type-badge {
+  background: #6c757d;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.result-type-badge {
+  background: #6c757d;
+}
+
+.search-result-item.airport .result-type-badge {
+  background: #28a745;
+}
+
+.search-result-item.navaid .result-type-badge {
+  background: #007bff;
+}
+
+.search-result-item.fix .result-type-badge {
+  background: #ffc107;
+  color: #333;
+}
+
+.result-name {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.result-coords {
+  font-size: 11px;
+  color: #999;
+  font-family: monospace;
+}
+
+.no-results {
+  padding: 15px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  background: #f8f9fa;
+  border: 2px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
 }
 </style>
 
